@@ -1,12 +1,16 @@
-local packageName = (...):match("(.-)[^%.]+$")
 local query = require 'lusty-store-mysql.query'
-local connection = require(packageName..'.connection')
+local connection = require 'lusty-store-mysql.storet.mysql.connection'
 
 return {
   handler = function(context)
     local db, err = connection(lusty, config)
     if not db then error(err) end
-    local q, m = query(context.query)
+    local q, m
+    if getmetatable(context.query) then
+      q, m = query(context.query)
+    else
+      q = context.query
+    end
     q = "SELECT "..(m.fields and table.concat(m.fields, ", ") or "*").." FROM "..config.collection..(#q>0 and " WHERE "..q or "")..";"
     local results = {}
     local res, err, errno, sqlstate = db:query(q)
