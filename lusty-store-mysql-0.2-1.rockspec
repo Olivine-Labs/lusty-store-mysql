@@ -1,5 +1,5 @@
 package = "lusty-store-mysql"
-version = "0.2-0"
+version = "0.2-1"
 source = {
   url = "https://github.com/Olivine-Labs/lusty-store-mysql/archive/v0.2.tar.gz",
   dir = "lusty-store-mysql-0.2"
