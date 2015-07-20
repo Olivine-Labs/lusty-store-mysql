@@ -1,5 +1,5 @@
 local query = require 'lusty-store-mysql.query'
-local connection = require 'lusty-store-mysql.storet.mysql.connection'
+local connection = require 'lusty-store-mysql.store.mysql.connection'
 
 return {
   handler = function(context)
@@ -15,7 +15,7 @@ return {
     local results = {}
     local res, err, errno, sqlstate = db:query(q)
     if not res then
-      return nil, "Query |"..q.."| failed: "..err
+      error("Query |"..q.."| failed: "..err)
     end
     return res
   end

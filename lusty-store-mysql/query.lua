@@ -7,8 +7,9 @@ local ops = {
   lte     = function(clause) return queries.simpleOp(" <= ", clause) end,
   gt      = function(clause) return queries.simpleOp(" > ", clause) end,
   gte     = function(clause) return queries.simpleOp(" >= ", clause) end,
-  ["and"] = function(clause) return queries.subquery(" and ", clause) end,
-  ["or"]  = function(clause) return queries.subquery(" or ", clause) end,
+  is      = function(clause) return queries.arrayOp(" IN ", clause) end,
+  ["and"] = function(clause) return queries.subquery(" AND ", clause) end,
+  ["or"]  = function(clause) return queries.subquery(" OR ", clause) end,
   sort    = function(clause, meta)
     meta.sort = clause.arguments[1]
   end,
@@ -33,15 +34,27 @@ local function query(query)
       error("Unsupported query operation '"..clause.operation.."'")
     end
   end
-  return table.concat(result), meta
+  return table.concat(result, ' AND '), meta
 end
-
 
 function queries.simpleOp(op, clause)
   if type(clause.arguments[1]) == "string" then
     clause.arguments[1] = ngx.quote_sql_str(clause.arguments[1])
   end
   return clause.field..op..clause.arguments[1]
+end
+
+function queries.arrayOp(op, clause)
+  -- TODO - support SELECT subqueries
+  local newArgs = {}
+  for _, v in pairs(clause.arguments[1]) do
+    if type(v) == 'string' then
+      newArgs[#newArgs+1] = ngx.quote_sql_str(v)
+    else
+      newArgs[#newArgs+1] = v
+    end
+  end
+  return clause.field..op..'('..table.concat(newArgs, ' ,')..')'
 end
 
 function queries.subquery(op, clause)
