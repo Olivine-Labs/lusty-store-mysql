@@ -32,16 +32,8 @@ return {
   handler = function(context)
     local db, err = connection(lusty, config)
     if not db then error(err) end
-    local q, m
-    if getmetatable(context.query) then
-      q, m = query(context.query)
-    else
-      q = context.query
-    end
-    local keys, values = keysAndValues(context.data)
-    local update = makeUpdate(context.data)
-    q = "INSERT INTO "..config.collection.." ("..table.concat(keys, ' ,')..") VALUES ("..table.concat(values, ' ,')..");"
-    local results = {}
+    local keys, values = keysAndValues(context.query)
+    local q = "INSERT INTO "..config.collection.." ("..table.concat(keys, ' ,')..") VALUES ("..table.concat(values, ' ,')..");"
     local res, err, errno, sqlstate = db:query(q)
     if not res then
       return nil, "Query |"..q.."| failed: "..err
