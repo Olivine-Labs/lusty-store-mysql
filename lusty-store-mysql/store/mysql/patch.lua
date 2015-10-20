@@ -40,7 +40,7 @@ return {
     end
     local keys, values = keysAndValues(context.data)
     local update = makeUpdate(context.data)
-    q = "INSERT INTO "..config.collection.." ("..table.concat(keys, ' ,')..") VALUES ("..table.concat(values, ' ,')..") ON DUPLICATE KEY UPDATE "..update..";"
+    q = "UPDATE "..config.collection.." "..update.." "..(#q>0 and " WHERE "..q or "")..";"
     local results = {}
     local res, err, errno, sqlstate = db:query(q)
     if not res then
