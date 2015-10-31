@@ -38,16 +38,18 @@ local function query(query)
 end
 
 function queries.simpleOp(op, clause)
-  if type(clause.arguments[1]) == "string" then
-    clause.arguments[1] = ngx.quote_sql_str(clause.arguments[1])
+  local argument = clause.arguments[1]
+  if type(argument) == "string" then
+    argument = ngx.quote_sql_str(argument)
   end
-  return clause.field..op..clause.arguments[1]
+  return clause.field..op..argument
 end
 
 function queries.arrayOp(op, clause)
   -- TODO - support SELECT subqueries
+  local argument = clause.arguments[1]
   local newArgs = {}
-  for _, v in pairs(clause.arguments[1]) do
+  for _, v in pairs(argument) do
     if type(v) == 'string' then
       newArgs[#newArgs+1] = ngx.quote_sql_str(v)
     else
