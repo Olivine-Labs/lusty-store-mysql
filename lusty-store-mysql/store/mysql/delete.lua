@@ -11,7 +11,7 @@ return {
     else
       q = context.query
     end
-    q = "DELETE FROM "..config.collection.." WHERE "..q..";"
+    q = "DELETE FROM "..config.collection..(#q>0 and " WHERE "..q or "")..";"
     local results = {}
     local res, err, errno, sqlstate = db:query(q)
     if not res then
