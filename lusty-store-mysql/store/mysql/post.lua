@@ -35,6 +35,7 @@ return {
     local keys, values = keysAndValues(context.query)
     local q = "INSERT INTO "..config.collection.." ("..table.concat(keys, ' ,')..") VALUES ("..table.concat(values, ' ,')..");"
     local res, err, errno, sqlstate = db:query(q)
+    db:set_keepalive(config.idle_timeout or 600000, config.pool_size or 10)
     if not res then
       return nil, "Query |"..q.."| failed: "..err
     end

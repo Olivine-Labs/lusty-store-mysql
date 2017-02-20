@@ -14,6 +14,7 @@ return {
     q = "SELECT "..(m.fields and table.concat(m.fields, ", ") or "*").." FROM "..config.collection..(#q>0 and " WHERE "..q or "")..";"
     local results = {}
     local res, err, errno, sqlstate = db:query(q)
+    db:set_keepalive(config.idle_timeout or 600000, config.pool_size or 10)
     if not res then
       error("Query |"..q.."| failed: "..err)
     end
